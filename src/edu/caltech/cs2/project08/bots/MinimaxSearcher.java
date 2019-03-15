@@ -12,6 +12,21 @@ public class MinimaxSearcher<B extends Board> extends AbstractSearcher<B> {
     }
 
     private static <B extends Board> BestMove minimax(Evaluator<B> evaluator, B board, int depth) {
-        return null;
+        if (depth == 0 || board.getMoves().size()==0) {
+            return new BestMove(evaluator.eval(board));
+        }
+
+        double bestValue = Double.NEGATIVE_INFINITY;
+        BestMove currBest = new BestMove(0);
+        for (Move move : board.getMoves()) {
+            board.makeMove(move);
+            BestMove possibleMove = new BestMove(move, -minimax(evaluator, board, depth - 1).score);
+            board.undoMove();
+            if (possibleMove.score > bestValue) {
+                currBest = possibleMove;
+                bestValue = possibleMove.score;
+            }
+        }
+        return currBest;
     }
 }
